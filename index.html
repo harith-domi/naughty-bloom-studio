@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naughty Bloom Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --cream:      #F7F0E6;
+      --parchment:  #EDE0CC;
+      --champagne:  #D4B896;
+      --gold:       #B49A72;
+      --deep-gold:  #8B6F47;
+      --ink:        #1C1C1C;
+      --ink-soft:   #3D3530;
+      --blush:      #E8CFC0;
+      --white-warm: #FBF7F2;
+      --serif:      'Cormorant Garamond', Georgia, serif;
+      --sans:       'Jost', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 60px;
+      background: transparent;
+      transition: background 0.5s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(247, 240, 230, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 14px 60px;
+      border-bottom: 1px solid rgba(212, 184, 150, 0.3);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      text-decoration: none;
+      transition: color 0.4s;
+    }
+    nav.scrolled .nav-logo { color: var(--ink); }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav.scrolled .nav-links a { color: var(--ink-soft); }
+    .nav-links a:hover { color: var(--champagne); }
+    nav.scrolled .nav-links a:hover { color: var(--deep-gold); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--cream);
+      transform: scale(1.05);
+      transition: transform 8s ease-out;
+    }
+    .hero-bg.loaded { transform: scale(1); }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      color: var(--ink);
+      padding: 0 20px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(52px, 8vw, 96px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(25px);
+      animation: fadeUp 1.1s 0.55s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--champagne);
+    }
+    .hero-tagline {
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--ink-soft);
+      margin-bottom: 48px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s 0.8s forwards;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 44px;
+      border: 1px solid var(--champagne);
+      color: var(--ink);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.4s;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1s 1.05s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(212,184,150,0.15);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+    .hero-cta:hover::before { transform: scaleX(1); }
+    .hero-cta:hover { border-color: var(--champagne); letter-spacing: 0.28em; }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: rgba(60,53,48,0.45);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      animation: bounce 2.5s 2s infinite;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, transparent, var(--champagne));
+    }
+
+    /* ===== MARQUEE STRIP ===== */
+    .marquee-strip {
+      background: var(--ink);
+      padding: 14px 0;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      animation: marquee 28s linear infinite;
+    }
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 30px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      padding: 0 30px;
+    }
+    .marquee-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ===== SECTION BASE ===== */
+    section { padding: 100px 60px; }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .section-title em { font-style: italic; color: var(--deep-gold); }
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--champagne);
+      margin: 28px 0;
+    }
+
+    /* ===== INTRO / SPLIT ===== */
+    .intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .intro-image-wrap {
+      position: relative;
+    }
+    .intro-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+    .intro-img-accent {
+      position: absolute;
+      bottom: -28px;
+      right: -28px;
+      width: 55%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 8px solid var(--cream);
+    }
+    .intro-img-frame {
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      right: -8px;
+      bottom: -8px;
+      border: 1px solid rgba(212,184,150,0.4);
+      pointer-events: none;
+    }
+    .intro-text { padding-right: 20px; }
+    .intro-body {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+    }
+    .intro-signature {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: italic;
+      color: var(--deep-gold);
+      margin-top: 36px;
+    }
+
+    /* ===== PRODUCTS GRID ===== */
+    .products-section {
+      background: var(--parchment);
+    }
+    .products-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .product-card:first-child {
+      grid-row: span 2;
+    }
+    .product-img {
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .product-card:first-child .product-img { min-height: 640px; }
+    .product-card:hover .product-img { transform: scale(1.06); }
+    .product-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,20,15,0.75) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 32px;
+    }
+    .product-card:hover .product-overlay { opacity: 1; }
+    .product-info { color: var(--white-warm); }
+    .product-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 300;
+      margin-bottom: 6px;
+    }
+    .product-price {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: var(--champagne);
+    }
+
+    /* ===== VALUES STRIP ===== */
+    .values-section {
+      background: var(--ink);
+      padding: 80px 60px;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .value-icon {
+      font-family: var(--serif);
+      font-size: 48px;
+      color: var(--champagne);
+      margin-bottom: 16px;
+      display: block;
+      font-style: italic;
+    }
+    .value-title {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--white-warm);
+      margin-bottom: 14px;
+    }
+    .value-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(251,247,242,0.5);
+    }
+
+    /* ===== TESTIMONIAL ===== */
+    .testimonial-section {
+      text-align: center;
+      padding: 120px 60px;
+      background: var(--white-warm);
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonial-section::before {
+      content: '"';
+      font-family: var(--serif);
+      font-size: 400px;
+      color: rgba(212,184,150,0.12);
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .testimonial-quote {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3vw, 34px);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--ink);
+      max-width: 800px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
+    .testimonial-author {
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ===== CONTACT CTA ===== */
+    .cta-section {
+      position: relative;
+      padding: 0;
+      overflow: hidden;
+    }
+    .cta-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(28,20,15,0.8) 40%, rgba(28,20,15,0.3) 100%),
+        url('images/bouquet7.jpg') center/cover;
+    }
+    .cta-content {
+      position: relative;
+      padding: 140px 100px;
+      max-width: 650px;
+    }
+    .cta-content .section-label { color: var(--champagne); }
+    .cta-content .section-title { color: var(--white-warm); }
+    .cta-content .divider { background: var(--gold); }
+    .cta-body {
+      font-size: 16px;
+      line-height: 1.8;
+      color: rgba(251,247,242,0.7);
+      margin-bottom: 44px;
+    }
+    .cta-buttons { display: flex; gap: 20px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 40px;
+      background: var(--champagne);
+      color: var(--ink);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover { background: var(--gold); color: var(--white-warm); }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 40px;
+      border: 1px solid rgba(251,247,242,0.4);
+      color: var(--white-warm);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--champagne); color: var(--champagne); }
+
+    /* ===== INSTAGRAM STRIP ===== */
+    .instagram-section {
+      padding: 80px 0 0;
+      background: var(--cream);
+    }
+    .instagram-header {
+      text-align: center;
+      padding: 0 60px 50px;
+    }
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .insta-cell {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+    .insta-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s;
+      display: block;
+    }
+    .insta-cell:hover .insta-img { transform: scale(1.1); }
+    .insta-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(139,111,71,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .insta-cell:hover .insta-overlay { opacity: 1; }
+    .insta-icon { color: white; font-size: 24px; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--ink);
+      padding: 70px 60px 30px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid rgba(212,184,150,0.15);
+      margin-bottom: 30px;
+    }
+    .footer-brand-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--white-warm);
+      margin-bottom: 16px;
+    }
+    .footer-brand-name em { font-style: italic; color: var(--champagne); }
+    .footer-tagline {
+      font-size: 13px;
+      line-height: 1.8;
+      color: rgba(251,247,242,0.45);
+      margin-bottom: 28px;
+    }
+    .footer-socials { display: flex; gap: 14px; }
+    .social-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(212,184,150,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--champagne);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .social-btn:hover { background: var(--champagne); color: var(--ink); border-color: var(--champagne); }
+    .footer-col-title {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 22px;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(251,247,242,0.45);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--champagne); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: rgba(251,247,242,0.3);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      nav { padding: 18px 28px; }
+      nav.scrolled { padding: 12px 28px; }
+      .nav-links { display: none; }
+      section { padding: 80px 28px; }
+      .intro { grid-template-columns: 1fr; gap: 50px; }
+      .intro-img-accent { display: none; }
+      .intro-text { padding-right: 0; }
+      .products-grid { grid-template-columns: 1fr 1fr; }
+      .product-card:first-child { grid-row: span 1; }
+      .product-card:first-child .product-img { min-height: 320px; }
+      .values-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .insta-grid { grid-template-columns: repeat(3, 1fr); }
+      .cta-content { padding: 80px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">NBS</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#collections">Collections</a></li>
+      <li><a href="#order">Order</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Naughty Bloom Studio</p>
+      <h1 class="hero-title">
+        玩的很花
+      </h1>
+      <p class="hero-tagline">Handcrafted bouquets made with intention &amp; love</p>
+      <a href="#collections" class="hero-cta">
+        Explore Collections
+        <span style="font-size:16px;">↓</span>
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <!-- ABOUT / INTRO -->
+  <section id="about" style="background: var(--cream);">
+    <div class="intro">
+      <div class="intro-image-wrap reveal">
+        <img
+          src="images/bouquet1.jpg"
+          alt="Naughty Bloom Studio florals"
+          class="intro-img"
+        />
+        <img
+          src="images/bouquet2.jpg"
+          alt="Bouquet detail"
+          class="intro-img-accent"
+        />
+        <div class="intro-img-frame"></div>
+      </div>
+      <div class="intro-text reveal reveal-delay-1">
+        <p class="section-label">Our Story</p>
+        <h2 class="section-title">Born from a <em>love</em><br>of blooms</h2>
+        <div class="divider"></div>
+        <p class="intro-body">
+          Naughty Bloom Studio is more than a flower shop — it's a creative studio
+          where each bouquet is thoughtfully composed, like a piece of art. We source
+          the freshest seasonal stems and pair them with our signature champagne-toned
+          wrapping to create arrangements that feel both wild and refined.
+        </p>
+        <p class="intro-body">
+          Whether it's a birthday surprise, a wedding, or a quiet gift to yourself —
+          every bloom we craft carries warmth, intention, and a little touch of naughty.
+        </p>
+        <div class="intro-signature">— Naughty Bloom Studio</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section id="collections" class="products-section">
+    <div class="products-header reveal">
+      <p class="section-label">Our Collections</p>
+      <h2 class="section-title">Crafted for <em>every</em> moment</h2>
+      <div class="divider" style="margin: 28px auto;"></div>
+    </div>
+    <div class="products-grid reveal">
+      <div class="product-card">
+        <img
+          src="images/bouquet3.jpg"
+          alt="Signature Bouquet"
+          class="product-img"
+        />
+        <div class="product-overlay">
+          <div class="product-info">
+            <p class="product-name">The Signature</p>
+            <p class="product-price">From RM 180</p>
+          </div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img
+          src="images/bouquet4.jpg"
+          alt="Champagne Rose"
+          class="product-img"
+        />
+        <div class="product-overlay">
+          <div class="product-info">
+            <p class="product-name">Champagne Rose</p>
+            <p class="product-price">From RM 120</p>
+          </div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img
+          src="images/bouquet5.jpg"
+          alt="Wild Garden"
+          class="product-img"
+        />
+        <div class="product-overlay">
+          <div class="product-info">
+            <p class="product-name">Wild Garden</p>
+            <p class="product-price">From RM 150</p>
+          </div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img
+          src="images/bouquet6.jpg"
+          alt="Golden Hour"
+          class="product-img"
+        />
+        <div class="product-overlay">
+          <div class="product-info">
+            <p class="product-name">Golden Hour</p>
+            <p class="product-price">From RM 200</p>
+          </div>
+        </div>
+      </div>
+      <div class="product-card">
+        <img
+          src="images/bouquet7.jpg"
+          alt="Blush Luxe"
+          class="product-img"
+        />
+        <div class="product-overlay">
+          <div class="product-info">
+            <p class="product-name">Blush Luxe</p>
+            <p class="product-price">From RM 160</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="values-section">
+    <div class="values-grid">
+      <div class="reveal">
+        <span class="value-icon">✦</span>
+        <p class="value-title">Fresh Daily</p>
+        <p class="value-desc">We source and hand-select the freshest blooms every morning, ensuring your bouquet arrives vibrant and alive.</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <span class="value-icon">⌘</span>
+        <p class="value-title">Custom Made</p>
+        <p class="value-desc">Every arrangement is crafted to your vision — from color palette to wrap style. No two bouquets are the same.</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <span class="value-icon">◈</span>
+        <p class="value-title">Same Day Delivery</p>
+        <p class="value-desc">Order before noon for same-day delivery within the area. Because love shouldn't have to wait.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section class="testimonial-section">
+    <p class="section-label reveal" style="margin-bottom: 40px;">Kind Words</p>
+    <blockquote class="testimonial-quote reveal reveal-delay-1">
+      "The bouquet was absolutely stunning — it looked even more beautiful than the photos.
+      Everyone at the party couldn't stop asking where it was from."
+    </blockquote>
+    <p class="testimonial-author reveal reveal-delay-2">— Sarah L., Kuala Lumpur</p>
+  </section>
+
+  <!-- CTA / CONTACT -->
+  <section class="cta-section" id="contact">
+    <div class="cta-bg"></div>
+    <div class="cta-content">
+      <p class="section-label reveal">Order &amp; Enquiries</p>
+      <h2 class="section-title reveal reveal-delay-1" style="color: var(--white-warm);">
+        Let's create<br>something <em>beautiful</em>
+      </h2>
+      <div class="divider reveal reveal-delay-2"></div>
+      <p class="cta-body reveal reveal-delay-2">
+        Ready to order or have a special request? Reach out via WhatsApp for the
+        fastest response, or follow us on Instagram for daily bloom inspiration.
+      </p>
+      <div class="cta-buttons reveal reveal-delay-3">
+        <a href="https://wa.me/60123456789" class="btn-primary">
+          WhatsApp Us
+        </a>
+        <a href="https://instagram.com/naughtybloomstudio" class="btn-outline">
+          @NaughtyBloomStudio
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM STRIP -->
+  <section class="instagram-section">
+    <div class="instagram-header reveal">
+      <p class="section-label">Follow Along</p>
+      <h2 class="section-title" style="font-size: 32px;">@naughtybloomstudio</h2>
+    </div>
+    <div class="insta-grid">
+      <div class="insta-cell"><img src="images/bouquet1.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+      <div class="insta-cell"><img src="images/bouquet2.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+      <div class="insta-cell"><img src="images/bouquet3.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+      <div class="insta-cell"><img src="images/bouquet4.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+      <div class="insta-cell"><img src="images/bouquet5.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+      <div class="insta-cell"><img src="images/bouquet6.jpg" alt="" class="insta-img"><div class="insta-overlay"><span class="insta-icon">♡</span></div></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <p class="footer-brand-name">Naughty <em>Bloom</em> Studio</p>
+        <p class="footer-tagline">
+          Handcrafted floral arrangements for every occasion.
+          Made with love, wrapped in warmth.
+        </p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" title="Instagram">✦</a>
+          <a href="#" class="social-btn" title="Facebook">f</a>
+          <a href="#" class="social-btn" title="WhatsApp">w</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-title">Explore</p>
+        <ul class="footer-links">
+          <li><a href="#about">Our Story</a></li>
+          <li><a href="#collections">Collections</a></li>
+          <li><a href="#contact">Custom Orders</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Services</p>
+        <ul class="footer-links">
+          <li><a href="#">Birthday Bouquets</a></li>
+          <li><a href="#">Wedding Florals</a></li>
+          <li><a href="#">Corporate Gifts</a></li>
+          <li><a href="#">Same Day Delivery</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Contact</p>
+        <ul class="footer-links">
+          <li><a href="#">WhatsApp</a></li>
+          <li><a href="#">Instagram DM</a></li>
+          <li><a href="#">Kuala Lumpur, MY</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Naughty Bloom Studio. All rights reserved.</span>
+      <span>Crafted with ♡</span>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Hero image load
+    const heroBg = document.getElementById('heroBg');
+    const img = new Image();
+    img.onload = () => heroBg.classList.add('loaded');
+    img.src = 'https://images.unsplash.com/photo-1490750967868-88df5691bbff?w=1800&q=85';
+
+    // Marquee
+    const items = ['Handcrafted Bouquets', 'Same Day Delivery', 'Custom Orders', 'Wedding Florals', 'Fresh Daily', 'Kuala Lumpur'];
+    const track = document.getElementById('marqueeTrack');
+    const html = items.map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+    track.innerHTML = html + html; // double for seamless loop
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
