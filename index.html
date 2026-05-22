@@ -614,26 +614,146 @@
     .reveal-delay-2 { transition-delay: 0.3s; }
     .reveal-delay-3 { transition-delay: 0.45s; }
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== HAMBURGER MENU ===== */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      background: none;
+      border: none;
+      z-index: 200;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--ink);
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--white-warm);
+      z-index: 150;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--deep-gold); }
+
+    /* ===== TABLET (max 900px) ===== */
     @media (max-width: 900px) {
-      nav { padding: 18px 28px; }
-      nav.scrolled { padding: 12px 28px; }
+      nav { padding: 18px 24px; }
+      nav.scrolled { padding: 14px 24px; }
       .nav-links { display: none; }
-      section { padding: 80px 28px; }
-      .intro { grid-template-columns: 1fr; gap: 50px; }
+      .hamburger { display: flex; }
+
+      section { padding: 70px 24px; }
+
+      .hero-title { font-size: clamp(42px, 10vw, 70px); }
+
+      .intro { grid-template-columns: 1fr; gap: 40px; }
       .intro-img-accent { display: none; }
+      .intro-img-frame { display: none; }
       .intro-text { padding-right: 0; }
+
       .products-grid { grid-template-columns: 1fr 1fr; }
       .product-card:first-child { grid-row: span 1; }
-      .product-card:first-child .product-img { min-height: 320px; }
-      .values-grid { grid-template-columns: 1fr; gap: 40px; }
-      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .product-card:first-child .product-img { min-height: 280px; }
+
+      .values-section { padding: 60px 24px; }
+      .values-grid { grid-template-columns: 1fr; gap: 36px; }
+
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
       .insta-grid { grid-template-columns: repeat(3, 1fr); }
-      .cta-content { padding: 80px 28px; }
+      .cta-content { padding: 80px 24px; max-width: 100%; }
+    }
+
+    /* ===== MOBILE (max 600px) ===== */
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      nav.scrolled { padding: 12px 20px; }
+
+      section { padding: 60px 20px; }
+
+      /* Hero */
+      .hero { min-height: 100svh; }
+      .hero-title { font-size: clamp(36px, 12vw, 52px); }
+      .hero-tagline { font-size: 13px; margin-bottom: 36px; }
+      .hero-cta { padding: 14px 30px; font-size: 11px; }
+      .hero-scroll { display: none; }
+
+      /* About */
+      .intro-body { font-size: 14px; }
+      .section-title { font-size: clamp(28px, 8vw, 40px); }
+
+      /* Collections */
+      .products-grid { grid-template-columns: 1fr; gap: 3px; }
+      .product-card:first-child { grid-row: span 1; }
+      .product-img { min-height: 280px !important; }
+      .product-overlay { opacity: 1; }
+
+      /* Values */
+      .values-section { padding: 50px 20px; }
+      .values-grid { gap: 32px; }
+      .value-icon { font-size: 36px; }
+
+      /* Testimonial */
+      .testimonial-section { padding: 70px 24px; }
+      .testimonial-section::before { font-size: 200px; }
+
+      /* CTA */
+      .cta-content { padding: 70px 20px; }
+      .cta-buttons { flex-direction: column; gap: 14px; }
+      .btn-primary, .btn-outline {
+        width: 100%;
+        justify-content: center;
+        padding: 16px 20px;
+        font-size: 11px;
+      }
+
+      /* Instagram */
+      .instagram-section { padding: 60px 0 0; }
+      .instagram-header { padding: 0 20px 36px; }
+      .insta-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Footer */
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 50px 20px 24px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+      /* Marquee */
+      .marquee-item { font-size: 10px; gap: 20px; padding: 0 20px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" onclick="closeMenu()">About</a>
+    <a href="#collections" onclick="closeMenu()">Collections</a>
+    <a href="#contact" onclick="closeMenu()">Order</a>
+    <a href="#contact" onclick="closeMenu()">Contact</a>
+  </div>
 
   <!-- NAV -->
   <nav id="navbar">
@@ -644,6 +764,11 @@
       <li><a href="#order">Order</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </nav>
 
   <!-- HERO -->
@@ -901,6 +1026,18 @@
   </footer>
 
   <script>
+    // Hamburger menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
     // Navbar scroll
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
