@@ -632,6 +632,27 @@
       background: var(--ink);
       transition: all 0.3s;
     }
+
+    /* ===== LANGUAGE SWITCHER ===== */
+    .lang-switcher {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .lang-btn {
+      background: none;
+      border: 1px solid transparent;
+      padding: 4px 10px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      color: var(--ink-soft);
+      font-family: var(--sans);
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+    .lang-btn:hover { border-color: var(--champagne); color: var(--ink); }
+    .lang-btn.active { border-color: var(--deep-gold); color: var(--deep-gold); font-weight: 500; }
     .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
@@ -749,21 +770,31 @@
 
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#about" onclick="closeMenu()">About</a>
-    <a href="#collections" onclick="closeMenu()">Collections</a>
-    <a href="#contact" onclick="closeMenu()">Order</a>
-    <a href="#contact" onclick="closeMenu()">Contact</a>
+    <a href="#about" onclick="closeMenu()" data-i18n="nav_about">About</a>
+    <a href="#collections" onclick="closeMenu()" data-i18n="nav_collections">Collections</a>
+    <a href="#contact" onclick="closeMenu()" data-i18n="nav_order">Order</a>
+    <a href="#contact" onclick="closeMenu()" data-i18n="nav_contact">Contact</a>
+    <div class="lang-switcher" style="margin-top:16px;">
+      <button class="lang-btn active" onclick="setLang('en');closeMenu()">EN</button>
+      <button class="lang-btn" onclick="setLang('zh');closeMenu()">中文</button>
+      <button class="lang-btn" onclick="setLang('ms');closeMenu()">BM</button>
+    </div>
   </div>
 
   <!-- NAV -->
   <nav id="navbar">
     <a href="#" class="nav-logo">NBS</a>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#collections">Collections</a></li>
-      <li><a href="#order">Order</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#about" data-i18n="nav_about">About</a></li>
+      <li><a href="#collections" data-i18n="nav_collections">Collections</a></li>
+      <li><a href="#contact" data-i18n="nav_order">Order</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
     </ul>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('ms')">BM</button>
+    </div>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span>
       <span></span>
@@ -776,12 +807,10 @@
     <div class="hero-bg" id="heroBg"></div>
     <div class="hero-content">
       <p class="hero-eyebrow">Naughty Bloom Studio</p>
-      <h1 class="hero-title">
-        玩的很花
-      </h1>
-      <p class="hero-tagline">Handcrafted bouquets made with intention &amp; love</p>
+      <h1 class="hero-title">玩的很花</h1>
+      <p class="hero-tagline" data-i18n="hero_tagline">Handcrafted bouquets made with intention &amp; love</p>
       <a href="#collections" class="hero-cta">
-        Explore Collections
+        <span data-i18n="hero_cta">Explore Collections</span>
         <span style="font-size:16px;">↓</span>
       </a>
     </div>
@@ -813,16 +842,16 @@
         <div class="intro-img-frame"></div>
       </div>
       <div class="intro-text reveal reveal-delay-1">
-        <p class="section-label">Our Story</p>
-        <h2 class="section-title">Born from a <em>love</em><br>of blooms</h2>
+        <p class="section-label" data-i18n="about_label">Our Story</p>
+        <h2 class="section-title" data-i18n="about_title">Born from a <em>love</em><br>of blooms</h2>
         <div class="divider"></div>
-        <p class="intro-body">
+        <p class="intro-body" data-i18n="about_body1">
           Naughty Bloom Studio is more than a flower shop — it's a creative studio
           where each bouquet is thoughtfully composed, like a piece of art. We source
           the freshest seasonal stems and pair them with our signature champagne-toned
           wrapping to create arrangements that feel both wild and refined.
         </p>
-        <p class="intro-body">
+        <p class="intro-body" data-i18n="about_body2">
           Whether it's a birthday surprise, a wedding, or a quiet gift to yourself —
           every bloom we craft carries warmth, intention, and a little touch of naughty.
         </p>
@@ -834,8 +863,8 @@
   <!-- COLLECTIONS -->
   <section id="collections" class="products-section">
     <div class="products-header reveal">
-      <p class="section-label">Our Collections</p>
-      <h2 class="section-title">Crafted for <em>every</em> moment</h2>
+      <p class="section-label" data-i18n="col_label">Our Collections</p>
+      <h2 class="section-title" data-i18n="col_title">Crafted for <em>every</em> moment</h2>
       <div class="divider" style="margin: 28px auto;"></div>
     </div>
     <div class="products-grid reveal">
@@ -912,48 +941,48 @@
     <div class="values-grid">
       <div class="reveal">
         <span class="value-icon">✦</span>
-        <p class="value-title">Fresh Daily</p>
-        <p class="value-desc">We source and hand-select the freshest blooms every morning, ensuring your bouquet arrives vibrant and alive.</p>
+        <p class="value-title" data-i18n="val1_title">Fresh Daily</p>
+        <p class="value-desc" data-i18n="val1_desc">We source and hand-select the freshest blooms every morning, ensuring your bouquet arrives vibrant and alive.</p>
       </div>
       <div class="reveal reveal-delay-1">
         <span class="value-icon">⌘</span>
-        <p class="value-title">Custom Made</p>
-        <p class="value-desc">Every arrangement is crafted to your vision — from color palette to wrap style. No two bouquets are the same.</p>
+        <p class="value-title" data-i18n="val2_title">Custom Made</p>
+        <p class="value-desc" data-i18n="val2_desc">Every arrangement is crafted to your vision — from color palette to wrap style. No two bouquets are the same.</p>
       </div>
       <div class="reveal reveal-delay-2">
         <span class="value-icon">◈</span>
-        <p class="value-title">Same Day Delivery</p>
-        <p class="value-desc">Order before noon for same-day delivery within the area. Because love shouldn't have to wait.</p>
+        <p class="value-title" data-i18n="val3_title">Same Day Delivery</p>
+        <p class="value-desc" data-i18n="val3_desc">Order before noon for same-day delivery within the area. Because love shouldn't have to wait.</p>
       </div>
     </div>
   </section>
 
   <!-- TESTIMONIAL -->
   <section class="testimonial-section">
-    <p class="section-label reveal" style="margin-bottom: 40px;">Kind Words</p>
-    <blockquote class="testimonial-quote reveal reveal-delay-1">
+    <p class="section-label reveal" style="margin-bottom: 40px;" data-i18n="testi_label">Kind Words</p>
+    <blockquote class="testimonial-quote reveal reveal-delay-1" data-i18n="testi_quote">
       "The bouquet was absolutely stunning — it looked even more beautiful than the photos.
       Everyone at the party couldn't stop asking where it was from."
     </blockquote>
-    <p class="testimonial-author reveal reveal-delay-2">— Sarah L., Kuala Lumpur</p>
+    <p class="testimonial-author reveal reveal-delay-2" data-i18n="testi_author">— Sarah L., Kuala Lumpur</p>
   </section>
 
   <!-- CTA / CONTACT -->
   <section class="cta-section" id="contact">
     <div class="cta-bg"></div>
     <div class="cta-content">
-      <p class="section-label reveal">Order &amp; Enquiries</p>
-      <h2 class="section-title reveal reveal-delay-1" style="color: var(--white-warm);">
+      <p class="section-label reveal" data-i18n="cta_label">Order &amp; Enquiries</p>
+      <h2 class="section-title reveal reveal-delay-1" style="color: var(--white-warm);" data-i18n="cta_title">
         Let's create<br>something <em>beautiful</em>
       </h2>
       <div class="divider reveal reveal-delay-2"></div>
-      <p class="cta-body reveal reveal-delay-2">
+      <p class="cta-body reveal reveal-delay-2" data-i18n="cta_body">
         Ready to order or have a special request? Reach out via WhatsApp for the
         fastest response, or follow us on Instagram for daily bloom inspiration.
       </p>
       <div class="cta-buttons reveal reveal-delay-3">
         <a href="https://wa.me/601111010777" target="_blank" rel="noopener noreferrer" class="btn-primary">
-          WhatsApp Us
+          <span data-i18n="cta_wa">WhatsApp Us</span>
         </a>
         <a href="https://instagram.com/nbs_naughtybloomstudio" target="_blank" rel="noopener noreferrer" class="btn-outline">
           @nbs_naughtybloomstudio
@@ -965,7 +994,7 @@
   <!-- INSTAGRAM STRIP -->
   <section class="instagram-section">
     <div class="instagram-header reveal">
-      <p class="section-label">Follow Along</p>
+      <p class="section-label" data-i18n="insta_label">Follow Along</p>
       <h2 class="section-title" style="font-size: 32px;">@nbs_naughtybloomstudio</h2>
     </div>
     <div class="insta-grid">
@@ -983,7 +1012,7 @@
     <div class="footer-top">
       <div>
         <p class="footer-brand-name">Naughty <em>Bloom</em> Studio</p>
-        <p class="footer-tagline">
+        <p class="footer-tagline" data-i18n="footer_tagline">
           Handcrafted floral arrangements for every occasion.
           Made with love, wrapped in warmth.
         </p>
@@ -1050,11 +1079,109 @@
     img.onload = () => heroBg.classList.add('loaded');
     img.src = 'https://images.unsplash.com/photo-1490750967868-88df5691bbff?w=1800&q=85';
 
+    // ===== TRANSLATIONS =====
+    const translations = {
+      en: {
+        nav_about: 'About', nav_collections: 'Collections', nav_order: 'Order', nav_contact: 'Contact',
+        hero_tagline: 'Handcrafted bouquets made with intention & love',
+        hero_cta: 'Explore Collections',
+        about_label: 'Our Story',
+        about_title: 'Born from a <em>love</em><br>of blooms',
+        about_body1: "Naughty Bloom Studio is more than a flower shop — it's a creative studio where each bouquet is thoughtfully composed, like a piece of art. We source the freshest seasonal stems and pair them with our signature champagne-toned wrapping to create arrangements that feel both wild and refined.",
+        about_body2: "Whether it's a birthday surprise, a wedding, or a quiet gift to yourself — every bloom we craft carries warmth, intention, and a little touch of naughty.",
+        col_label: 'Our Collections',
+        col_title: 'Crafted for <em>every</em> moment',
+        val1_title: 'Fresh Daily', val1_desc: "We source and hand-select the freshest blooms every morning, ensuring your bouquet arrives vibrant and alive.",
+        val2_title: 'Custom Made', val2_desc: "Every arrangement is crafted to your vision — from color palette to wrap style. No two bouquets are the same.",
+        val3_title: 'Same Day Delivery', val3_desc: "Order before noon for same-day delivery within the area. Because love shouldn't have to wait.",
+        testi_label: 'Kind Words',
+        testi_quote: '"The bouquet was absolutely stunning — it looked even more beautiful than the photos. Everyone at the party couldn\'t stop asking where it was from."',
+        testi_author: '— Sarah L., Kuala Lumpur',
+        cta_label: 'Order & Enquiries',
+        cta_title: "Let's create<br>something <em>beautiful</em>",
+        cta_body: 'Ready to order or have a special request? Reach out via WhatsApp for the fastest response, or follow us on Instagram for daily bloom inspiration.',
+        cta_wa: 'WhatsApp Us',
+        insta_label: 'Follow Along',
+        footer_tagline: 'Handcrafted floral arrangements for every occasion. Made with love, wrapped in warmth.',
+        marquee: ['Handcrafted Bouquets', 'Same Day Delivery', 'Custom Orders', 'Wedding Florals', 'Fresh Daily', 'Kuala Lumpur']
+      },
+      zh: {
+        nav_about: '关于我们', nav_collections: '系列', nav_order: '下单', nav_contact: '联系',
+        hero_tagline: '每一束花，都是用心与爱手工打造',
+        hero_cta: '探索系列',
+        about_label: '我们的故事',
+        about_title: '源于对花的<em>热爱</em>',
+        about_body1: 'Naughty Bloom Studio 不只是一家花店 — 它是一个创意工作室，每一束花都像艺术品般精心构思。我们精选时令新鲜花材，搭配标志性的香槟色包装，创作出既野性又精致的花束。',
+        about_body2: '无论是生日惊喜、婚礼布置，还是送给自己的礼物 — 我们的每一朵花都承载着温暖、用心，以及一点点的俏皮。',
+        col_label: '我们的系列',
+        col_title: '为<em>每个</em>时刻而作',
+        val1_title: '每日新鲜', val1_desc: '我们每天早晨精心挑选最新鲜的花材，确保您的花束送到时依然鲜艳动人。',
+        val2_title: '定制专属', val2_desc: '每一束花都根据您的想法量身打造 — 从配色到包装风格，每束都是独一无二的。',
+        val3_title: '当天送达', val3_desc: '中午前下单，可在当天送达周边地区。因为爱，不应该等待。',
+        testi_label: '顾客好评',
+        testi_quote: '"这束花太美了 — 比照片里还要好看。派对上每个人都在问是从哪里买的。"',
+        testi_author: '— Sarah L., 吉隆坡',
+        cta_label: '下单 & 咨询',
+        cta_title: '让我们一起创造<br><em>美丽</em>',
+        cta_body: '准备好下单或有特别要求？通过 WhatsApp 联系我们获得最快回复，或在 Instagram 上关注我们获取每日花卉灵感。',
+        cta_wa: 'WhatsApp 联系',
+        insta_label: '关注我们',
+        footer_tagline: '为每个场合精心打造的花艺作品。用爱制作，温暖包装。',
+        marquee: ['手工花束', '当天送达', '定制订单', '婚礼花艺', '每日新鲜', '吉隆坡']
+      },
+      ms: {
+        nav_about: 'Tentang', nav_collections: 'Koleksi', nav_order: 'Pesanan', nav_contact: 'Hubungi',
+        hero_tagline: 'Bunga tangan yang direka dengan penuh kasih sayang',
+        hero_cta: 'Lihat Koleksi',
+        about_label: 'Kisah Kami',
+        about_title: 'Lahir dari <em>cinta</em><br>akan bunga',
+        about_body1: 'Naughty Bloom Studio lebih daripada sekadar kedai bunga — ia adalah studio kreatif di mana setiap bunga tangan dirangka dengan teliti, seperti karya seni. Kami memilih tangkai bunga musiman yang paling segar dan menggabungkannya dengan balutan champagne untuk mencipta susunan yang terasa liar namun halus.',
+        about_body2: 'Sama ada untuk kejutan hari jadi, perkahwinan, atau hadiah untuk diri sendiri — setiap bunga yang kami cipta membawa kehangatan, niat, dan sedikit sentuhan nakal.',
+        col_label: 'Koleksi Kami',
+        col_title: 'Dicipta untuk <em>setiap</em> detik',
+        val1_title: 'Segar Setiap Hari', val1_desc: 'Kami memilih bunga-bunga segar terbaik setiap pagi, memastikan bunga tangan anda tiba dengan penuh warna dan kehidupan.',
+        val2_title: 'Tempahan Khas', val2_desc: 'Setiap susunan direka mengikut visi anda — dari palet warna hingga gaya balutan. Tiada dua bunga tangan yang sama.',
+        val3_title: 'Penghantaran Hari Sama', val3_desc: 'Buat pesanan sebelum tengah hari untuk penghantaran hari sama dalam kawasan. Kerana cinta tidak seharusnya menunggu.',
+        testi_label: 'Kata-Kata Mereka',
+        testi_quote: '"Bunga tangan ini sungguh memukau — jauh lebih cantik daripada dalam gambar. Semua tetamu tidak berhenti bertanya di mana ia dibeli."',
+        testi_author: '— Sarah L., Kuala Lumpur',
+        cta_label: 'Pesanan & Pertanyaan',
+        cta_title: 'Mari cipta<br>sesuatu yang <em>indah</em>',
+        cta_body: 'Bersedia untuk membuat pesanan atau ada permintaan istimewa? Hubungi kami melalui WhatsApp untuk respons paling cepat, atau ikuti kami di Instagram untuk inspirasi bunga harian.',
+        cta_wa: 'Hubungi WhatsApp',
+        insta_label: 'Ikuti Kami',
+        footer_tagline: 'Susunan bunga untuk setiap majlis. Dibuat dengan kasih sayang, dibalut dengan kehangatan.',
+        marquee: ['Bunga Tangan Khas', 'Penghantaran Hari Sama', 'Tempahan Khas', 'Bunga Perkahwinan', 'Segar Setiap Hari', 'Kuala Lumpur']
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) el.innerHTML = t[key];
+      });
+      // Update marquee
+      buildMarquee(t.marquee);
+      // Update active lang button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim() === { en: 'EN', zh: '中文', ms: 'BM' }[lang]);
+      });
+    }
+
+    function buildMarquee(items) {
+      const track = document.getElementById('marqueeTrack');
+      const html = items.map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+      track.innerHTML = html + html;
+    }
+
     // Marquee
     const items = ['Handcrafted Bouquets', 'Same Day Delivery', 'Custom Orders', 'Wedding Florals', 'Fresh Daily', 'Kuala Lumpur'];
-    const track = document.getElementById('marqueeTrack');
-    const html = items.map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
-    track.innerHTML = html + html; // double for seamless loop
+    buildMarquee(items);
 
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
